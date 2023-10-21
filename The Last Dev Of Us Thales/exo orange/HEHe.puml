@@ -1,0 +1,8 @@
+@startuml
+(builder)-->(liste raw)
+(liste raw)-->(liste triée)
+
+(new entrant)-->(set le timer global a son heure entree)
+(set le timer global a son heure entree)-->(ajoute le nouveau dans le set de chaque membre présent)
+'(ajoute le nouveau dans le set de chaque membre présent)-->()
+@enduml
