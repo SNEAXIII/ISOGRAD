@@ -8,6 +8,19 @@ with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
 
 
 # START
+
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.true = None
+        self.false = None
+
+
+class BinaryTree:
+    def __init__(self, nbGene):
+        self.root = Node(nbGene)
+        for _ in range
+
 def reverse(string):
     return string[::-1]
 
@@ -55,6 +68,7 @@ for numberOfIteration in range(valMaxi):
     if countResult > lenFusion != -1:
         countResult = lenFusion
         stringResult = geneA
+    numberOfIteration += 1
 print(stringResult)
 # END
 
