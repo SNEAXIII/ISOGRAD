@@ -108,7 +108,7 @@ for numberOfIteration in range(valMaxi):
     for indexGeneA in range(len(pattern) - 1):
         indexGeneB = indexGeneA + 1
         actualGeneBase = binaryTree.getNextNode(pattern[indexGeneB], actualGeneBase)
-        print(binToIndex(pattern[0:indexGeneB + 1]))
+        # print(binToIndex(pattern[0:indexGeneB + 1]))
         if not actualGeneBase.value:
             geneB = listGene[indexGeneB]
             if pattern[indexGeneB]:
@@ -124,7 +124,7 @@ for numberOfIteration in range(valMaxi):
         stringResult = geneA
 print(stringResult)
 # END
-binaryTree.print_tree()
+# binaryTree.print_tree()
 if len(outputExpected) == len(stringResult):
     print("Le test est valide")
 else:
