@@ -1,5 +1,4 @@
 import sys, io
-from _ast import pattern
 
 sampleToTest = "Custom"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
@@ -16,11 +15,14 @@ class Node:
         self.true = None
 
     def __str__(self):
-        return f"({self.false})<--{self.value}-->({self.true})"
+        return f"{self.false})<--{self.value}-->({self.true})"
+
+    def setValue(self, value):
+        self.value = value
+
 
 
 class binaryTree:
-
     def __init__(self, nombreGene):
         self.root = self.buildTree(nombreGene)
 
@@ -28,17 +30,23 @@ class binaryTree:
     def buildTree(nombreGene):
         tree = []
         nombrePossibilite = 2 ** nombreGene - 1
-        for i in range(nombrePossibilite):
-            tree.append(Node(False))
-
+        tree.append(Node("Root"))
         # Construction de l'arbre en établissant les relations entre les nœuds
-        for i in range(1, len(tree)):
+        for i in range(1, nombrePossibilite):
+            tree.append(Node(False))
             parent_index = (i - 1) // 2
             if i % 2 == 0:
                 tree[parent_index].false = tree[i]
             else:
                 tree[parent_index].true = tree[i]
         return tree[0]
+
+    def getNextNode(self, bool, node = None):
+        if node is None:
+            node = self.root
+        if bool:
+            return node.true
+        return node.false
 
 
 def reverse(string):
@@ -75,15 +83,17 @@ stringResult = input()
 countResult = len(stringResult)
 listGene = stringResult.split(" ")
 
-progDynamique = []
-
 for numberOfIteration in range(valMaxi):
-    progDynamique.append(False)
+
     pattern = list(map(int, bin(numberOfIteration)[2:].zfill(numberOfGene)))
     # pattern = [(numberOfIteration >> i) & 1 for i in range(numberOfGene)]
-    geneA = listGene[0]
-    if pattern[0]:
-        geneA = reverse(geneA)
+
+    actualGeneBase = binaryTree.getNextNode(pattern[0])
+    if not actualGeneBase.value:
+        if not pattern[0]: actualGeneBase.value = listGene[0]
+        else: actualGeneBase.value = reverse(listGene[0])
+    geneA = actualGeneBase.value
+
     for indexGeneA in range(len(pattern) - 1):
         indexGeneB = indexGeneA + 1
         print(binToIndex(pattern[0:indexGeneB + 1]))
