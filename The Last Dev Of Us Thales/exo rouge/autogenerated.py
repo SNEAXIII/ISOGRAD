@@ -45,5 +45,4 @@ for numberOfIteration in range(valMaxi):
     if countResult > lenFusion != -1:
         countResult = lenFusion
         stringResult = geneA
-    numberOfIteration += 1
 print(stringResult)
