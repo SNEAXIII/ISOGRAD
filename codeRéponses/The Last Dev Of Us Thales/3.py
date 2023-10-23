@@ -1,13 +1,3 @@
-import sys, io
-
-sampleToTest = "11"
-with open(f"dataSample/output{sampleToTest}.txt") as f:
-    outputExpected = int(f.read())
-with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
-    sys.stdin = io.StringIO(f.read())
-
-
-# START
 def convertHourMinuteToMinute(stringHourMinute):
     hour,minute = map(int,stringHourMinute.split(":"))
     return hour * 60 + minute
@@ -50,9 +40,3 @@ for incomingSurvivor in listAllSurvivor:
     listInCommonRoom.append(incomingSurvivor)
 
 print(numberOfRisk)
-# END
-
-if outputExpected == numberOfRisk:
-    print("Le test est valide")
-else:
-    print(f"Le test n'est pas valide --> output = {numberOfRisk} contre exepct = {outputExpected}")
