@@ -9,11 +9,45 @@ with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
 
 
 # START
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.false = None
+        self.true = None
+
+    def __str__(self):
+        return f"({self.false})<--{self.value}-->({self.true})"
+
+
+class binaryTree:
+
+    def __init__(self, nombreGene):
+        self.root = self.buildTree(nombreGene)
+
+    @staticmethod
+    def buildTree(nombreGene):
+        tree = []
+        nombrePossibilite = 2 ** nombreGene - 1
+        for i in range(nombrePossibilite):
+            tree.append(Node(False))
+
+        # Construction de l'arbre en établissant les relations entre les nœuds
+        for i in range(1, len(tree)):
+            parent_index = (i - 1) // 2
+            if i % 2 == 0:
+                tree[parent_index].false = tree[i]
+            else:
+                tree[parent_index].true = tree[i]
+        return tree[0]
+
+
 def reverse(string):
     return string[::-1]
 
+
 def binToIndex(arrayBin):
-    return int(''.join(map(str, arrayBin)), base=2)
+    return ''.join(map(str, arrayBin))
+
 
 def fusion(genes):
     geneA, geneB = genes
@@ -30,12 +64,12 @@ def fusion(genes):
                 break
             if lenFusion in (len(geneA), len(geneB)):
                 return stringFusion, lenFusion
-
     return strMini, nbMini
 
 
 numberOfGene = int(input())
 valMaxi = 2 ** numberOfGene
+binaryTree = binaryTree(numberOfGene)
 
 stringResult = input()
 countResult = len(stringResult)
@@ -52,7 +86,7 @@ for numberOfIteration in range(valMaxi):
         geneA = reverse(geneA)
     for indexGeneA in range(len(pattern) - 1):
         indexGeneB = indexGeneA + 1
-        print(binToIndex(pattern[0:indexGeneB+1]),pattern[0:indexGeneB+1],pattern)
+        print(binToIndex(pattern[0:indexGeneB + 1]))
         geneB = listGene[indexGeneB]
         if pattern[indexGeneB]:
             geneB = reverse(geneB)
@@ -65,7 +99,6 @@ for numberOfIteration in range(valMaxi):
         stringResult = geneA
 print(stringResult)
 # END
-print(progDynamique)
 if len(outputExpected) == len(stringResult):
     print("Le test est valide")
 else:
