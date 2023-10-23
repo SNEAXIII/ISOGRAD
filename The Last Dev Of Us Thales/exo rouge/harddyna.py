@@ -1,6 +1,6 @@
 import sys, io
 
-sampleToTest = "Custom"
+sampleToTest = "9"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -21,7 +21,6 @@ class Node:
         self.value = value
 
 
-
 class binaryTree:
     def __init__(self, nombreGene):
         self.root = self.buildTree(nombreGene)
@@ -29,7 +28,7 @@ class binaryTree:
     @staticmethod
     def buildTree(nombreGene):
         tree = []
-        nombrePossibilite = 2 ** nombreGene - 1
+        nombrePossibilite = 2 ** (nombreGene + 1)
         tree.append(Node("Root"))
         # Construction de l'arbre en établissant les relations entre les nœuds
         for i in range(1, nombrePossibilite):
@@ -41,12 +40,22 @@ class binaryTree:
                 tree[parent_index].true = tree[i]
         return tree[0]
 
-    def getNextNode(self, bool, node = None):
+    def getNextNode(self, bool, node=None):
         if node is None:
             node = self.root
         if bool:
             return node.true
         return node.false
+
+    def print_tree(self, node="root", level=0):
+        if node == "root":
+            node = self.root
+        if node is None:
+            return
+
+        self.print_tree(node.false, level + 1)
+        print("    " * level + str(node.value))
+        self.print_tree(node.true, level + 1)
 
 
 def reverse(string):
@@ -72,7 +81,7 @@ def fusion(genes):
                 break
             if lenFusion in (len(geneA), len(geneB)):
                 return stringFusion, lenFusion
-    return strMini, nbMini
+    return strMini
 
 
 numberOfGene = int(input())
@@ -90,17 +99,23 @@ for numberOfIteration in range(valMaxi):
 
     actualGeneBase = binaryTree.getNextNode(pattern[0])
     if not actualGeneBase.value:
-        if not pattern[0]: actualGeneBase.value = listGene[0]
-        else: actualGeneBase.value = reverse(listGene[0])
+        if not pattern[0]:
+            actualGeneBase.value = listGene[0]
+        else:
+            actualGeneBase.value = reverse(listGene[0])
     geneA = actualGeneBase.value
 
     for indexGeneA in range(len(pattern) - 1):
         indexGeneB = indexGeneA + 1
+        actualGeneBase = binaryTree.getNextNode(pattern[indexGeneB], actualGeneBase)
         print(binToIndex(pattern[0:indexGeneB + 1]))
-        geneB = listGene[indexGeneB]
-        if pattern[indexGeneB]:
-            geneB = reverse(geneB)
-        geneA, lenFusion = fusion((geneA, geneB))
+        if not actualGeneBase.value:
+            geneB = listGene[indexGeneB]
+            if pattern[indexGeneB]:
+                geneB = reverse(geneB)
+            actualGeneBase.value = fusion((geneA, geneB))
+        geneA = actualGeneBase.value
+        lenFusion = len(geneA)
         if countResult < lenFusion:
             lenFusion = -1
             break
@@ -109,6 +124,7 @@ for numberOfIteration in range(valMaxi):
         stringResult = geneA
 print(stringResult)
 # END
+binaryTree.print_tree()
 if len(outputExpected) == len(stringResult):
     print("Le test est valide")
 else:
