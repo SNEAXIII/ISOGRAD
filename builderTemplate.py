@@ -1,5 +1,4 @@
 import os
-import shutil
 def create_folder(folder_path):
     try:
         os.mkdir(folder_path)
