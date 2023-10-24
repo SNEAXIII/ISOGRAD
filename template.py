@@ -2,7 +2,7 @@ import sys, io
 
 sampleToTest = "1"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
-    outputExpected = int(f.read())
+    outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
     sys.stdin = io.StringIO(f.read())
 
