@@ -27,6 +27,11 @@ def buildCounter(listAllRecipe):
         counter.append([0, recipe[4]])
     return counter
 
+def listWithIntToHex(listeRecipeIndex):
+    if listeRecipeIndex[0] > 15:
+        print("-------------c'est la merde--------------")
+        print("------------oublie la base 16------------")
+    return format(listeRecipeIndex[0],"x")
 
 def plus1ToCounter(counter):
     for recipeIndex in counter:
@@ -35,8 +40,7 @@ def plus1ToCounter(counter):
 
 
 def counterToString(counter):
-    pass
-    # TODO A faire
+    return "".join(map(listWithIntToHex,counter))
 
 
 result = ""
@@ -58,6 +62,7 @@ print(listAllRecipe)
 counter = buildCounter(listAllRecipe)
 
 # TODO remove this shit
+print(counterToString([[16, 1], [0, 4]]))
 print(counter)
 # END
 if outputExpected == result:
