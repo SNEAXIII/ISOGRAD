@@ -45,7 +45,7 @@ class Counter:
         return self.counterToString() == "0" * len(self.counter)
 
     def plus1ToCounter(self):
-        for recipeIndex in self.counter:
+        for recipeIndex in self.counter[::-1]:
             recipeIndex[0] += 1
             if not recipeIndex[0] > recipeIndex[1]:
                 return True
@@ -64,6 +64,7 @@ class Counter:
                         recipeCounter[0] = 0
                     else:
                         recipeCounter[0] += 1
+                        break
                 break
 
 
@@ -74,39 +75,31 @@ listTotalBerry = tuple(map(int, input().split()))
 intNumberOfRecipe = int(input())
 
 listAllRecipe = []
-# TODO condition d'arret
-run = True
 for _ in range(intNumberOfRecipe):
     recipe = list(map(int, input().split()))
     recipe.append(maxRecipe(recipe, listTotalBerry))
     listAllRecipe.append(recipe)
 
+# TODO condition d'arret
+run = True
+progDyna = {}
+
+while run:
+    run = False
 
 counter = Counter(listAllRecipe)
 
 print(counter.counterToString())
 print("1_______________________")
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-counter.plus1ToCounter()
-print(counter.counterToString())
-print("2_______________________")
-counter.getToPreviousRecipe()
-print(counter.counterToString())
-counter.getToPreviousRecipe()
-print(counter.counterToString())
+for _ in range(67):
+    counter.plus1ToCounter()
 
-print(counter.isEmpty())
-print("3_______________________")
+print(counter.counterToString())
+counter.getToPreviousRecipe()
+print(counter.counterToString())
 
 # END
 if outputExpected == result:
     print("Le test est valide")
 else:
-    print(f"Le test n'est pas valide → output = <|{result}|> contre exepct = <|{outputExpected}|>")
+    print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepct ----> <|{outputExpected}|>")
