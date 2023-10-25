@@ -1,6 +1,6 @@
 import sys, io
 
-sampleToTest = "4"
+sampleToTest = "Custom2"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -42,26 +42,46 @@ class AllRecipe:
     def buildAllPossibilities(self):
         listAllPossibilities = []
         for i, recipe in enumerate(self.listAllRecipe):
-            print(recipe)
+            # TODO REMOVE THIS SHIT
+            # print(recipe)
             listAllPossibilities.append([])
             for number in range(recipe[4] + 1):
                 listAllPossibilities[i].append(self.berryUsedPerMultipleIteration(recipe, number))
         return listAllPossibilities
+
+    def getByPossibilitie(self, counter):
+        result = []
+        for index, recipe in enumerate(counter):
+            result.append(self.allPossibilities[index][recipe[0]])
+        return result
 
     @staticmethod
     def berryUsedPerMultipleIteration(recipe, number):
         a, b, c, n, m = recipe
         return [a * number, b * number, c * number]
 
+    def isPossibleToCraft(self, counter):
+        currentPossibilities = self.getByPossibilitie(counter)
+        sumA = sum(recipe[0] for recipe in currentPossibilities)
+        sumB = sum(recipe[1] for recipe in currentPossibilities)
+        sumC = sum(recipe[2] for recipe in currentPossibilities)
+        maxA, maxB, maxC = self.listTotalBerry
+        if sumA <= maxA and sumB <= maxB and sumC <= maxC:
+            return counter
+        return False
+
+    def getMaxNrjByRecipe(self,counter):
+        return sum(counter[index][0]*self.listAllRecipe[index][3] for index in range(len(counter)))
+
 
 class Counter:
     def __init__(self, listAllRecipe: AllRecipe):
-        self.counter = self.buildCounter(listAllRecipe.listAllRecipe)
+        self.listAllRecipe = listAllRecipe
+        self.counter = self.buildCounter()
 
-    @staticmethod
-    def buildCounter(listAllRecipe):
+    def buildCounter(self):
         counter = []
-        for recipe in listAllRecipe:
+        for recipe in self.listAllRecipe.listAllRecipe:
             counter.append([0, recipe[4]])
         return counter
 
@@ -105,16 +125,15 @@ class Counter:
 result = ""
 print(result)
 
-# TODO condition d'arret
-run = True
-progDyna = {}
-
-while run:
-    run = False
-
 allRecipe = AllRecipe()
 
 counter = Counter(allRecipe)
+
+# TODO condition d'arret
+run = True
+while run:
+    run = False
+
 
 print(counter.counterToString())
 print("1_______________________")
@@ -123,6 +142,13 @@ for _ in range(67):
 
 print(counter.counterToString())
 counter.getToPreviousRecipe()
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+# counter.plus1ToCounter()
+# counter.getToPreviousRecipe()
+print(counter.counterToString())
+print("2_______________________")
+print(counter.listAllRecipe.getMaxNrjByRecipe(counter.counter))
 print(counter.counterToString())
 
 # END
