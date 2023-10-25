@@ -13,7 +13,7 @@ def maxRecipe(recipe, listTotalBerry):
     TB1, TB2, TB3 = listTotalBerry
     result = 0
     if RB1 != 0:
-        result = max(result, TB1 // RB1)
+        result = TB1 // RB1
     if RB2 != 0:
         result = max(result, TB2 // RB2)
     if RB3 != 0:
@@ -27,20 +27,35 @@ def buildCounter(listAllRecipe):
         counter.append([0, recipe[4]])
     return counter
 
+
 def listWithIntToHex(listeRecipeIndex):
     if listeRecipeIndex[0] > 15:
         print("-------------c'est la merde--------------")
         print("------------oublie la base 16------------")
-    return format(listeRecipeIndex[0],"x")
+    return format(listeRecipeIndex[0], "x")
+
 
 def plus1ToCounter(counter):
     for recipeIndex in counter:
-        pass
-    # TODO Faire le counter
+        recipeIndex[0]+=1
+        if not recipeIndex[0] > recipeIndex[1]:
+            return True
+        recipeIndex[0] = 0
+    return False
 
+# TODO c'est tres sus comme technique faire gaffe aux reset pas et qui fait des boucles infinies
+def getToPreviousRecipe(counter):
+    for index,recipeCounter in enumerate(counter[::-1]):
+        if recipeCounter[0]:
+            recipeCounter[0] = 0
+            plus1ToCounter(counter)
+            break
 
 def counterToString(counter):
-    return "".join(map(listWithIntToHex,counter))
+    return "".join(map(listWithIntToHex, counter))
+
+def isEmptyCounter(counter):
+    return counterToString(counter) == "0" * len(counter)
 
 
 result = ""
@@ -50,7 +65,8 @@ listTotalBerry = tuple(map(int, input().split()))
 intNumberOfRecipe = int(input())
 
 listAllRecipe = []
-
+# TODO condition d'arret
+run = True
 for _ in range(intNumberOfRecipe):
     recipe = list(map(int, input().split()))
     recipe.append(maxRecipe(recipe, listTotalBerry))
@@ -61,9 +77,25 @@ print(listAllRecipe)
 
 counter = buildCounter(listAllRecipe)
 
-# TODO remove this shit
-print(counterToString([[16, 1], [0, 4]]))
+print("1_______________________")
 print(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+plus1ToCounter(counter)
+print("2_______________________")
+print(counter)
+
+# print(counterToString(counter))
+print("3_______________________")
+getToPreviousRecipe(counter)
+print(counter)
+
 # END
 if outputExpected == result:
     print("Le test est valide")
