@@ -1,6 +1,6 @@
 import sys, io
 
-sampleToTest = "1"
+sampleToTest = "Custom"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -21,7 +21,7 @@ def maxRecipe(recipe, listTotalBerry):
     return result
 
 
-class counter:
+class Counter:
     def __init__(self, listAllRecipe):
         self.counter = self.buildCounter(listAllRecipe)
 
@@ -41,7 +41,7 @@ class counter:
     def counterToString(self):
         return "".join(map(self.listWithIntToHex, self.counter))
 
-    def isEmptyCounter(self):
+    def isEmpty(self):
         return self.counterToString() == "0" * len(self.counter)
 
     def plus1ToCounter(self):
@@ -50,15 +50,20 @@ class counter:
             if not recipeIndex[0] > recipeIndex[1]:
                 return True
             recipeIndex[0] = 0
+        # If the counter get to the initial position
         return False
-
 
     # TODO c'est tres sus comme technique faire gaffe aux reset pas et qui fait des boucles infinies
     def getToPreviousRecipe(self):
-        for index, recipeCounter in enumerate(self.counter[::-1]):
-            if recipeCounter[0]:
-                recipeCounter[0] = 0
-                self.plus1ToCounter()
+        for index in range(len(self.counter)-1, -1, -1):
+            if self.counter[index][0]:
+                self.counter[index][0] = 0
+                for indexRecipeCounterToReset in range(index - 1, -1, -1):
+                    recipeCounter = self.counter[indexRecipeCounterToReset]
+                    if recipeCounter[0] == recipeCounter[1]:
+                        recipeCounter[0] = 0
+                    else:
+                        recipeCounter[0] += 1
                 break
 
 
@@ -76,29 +81,29 @@ for _ in range(intNumberOfRecipe):
     recipe.append(maxRecipe(recipe, listTotalBerry))
     listAllRecipe.append(recipe)
 
-# TODO remove this shit
-print(listAllRecipe)
 
-counter = counter(listAllRecipe)
+counter = Counter(listAllRecipe)
 
+print(counter.counterToString())
 print("1_______________________")
-print(counter.counterToString())
 counter.plus1ToCounter()
-# plus1ToCounter(counter)
-# plus1ToCounter(counter)
-# plus1ToCounter(counter)
-# plus1ToCounter(counter)
-# plus1ToCounter(counter)
-# plus1ToCounter(counter)
-# plus1ToCounter(counter)
-# plus1ToCounter(counter)
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+counter.plus1ToCounter()
+print(counter.counterToString())
 print("2_______________________")
+counter.getToPreviousRecipe()
+print(counter.counterToString())
+counter.getToPreviousRecipe()
 print(counter.counterToString())
 
-# print(counterToString(counter))
+print(counter.isEmpty())
 print("3_______________________")
-# getToPreviousRecipe(counter)
-print(counter.counter)
 
 # END
 if outputExpected == result:
