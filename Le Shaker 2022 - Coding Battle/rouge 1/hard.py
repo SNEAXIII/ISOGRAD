@@ -1,6 +1,6 @@
 import sys, io
 
-sampleToTest = "Custom"
+sampleToTest = "4"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -8,24 +8,58 @@ with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
 
 
 # START
-def maxRecipe(recipe, listTotalBerry):
-    RB1, RB2, RB3, NRJ = recipe
-    TB1, TB2, TB3 = listTotalBerry
-    result = 0
-    if RB1 != 0:
-        result = TB1 // RB1
-    if RB2 != 0:
-        result = max(result, TB2 // RB2)
-    if RB3 != 0:
-        result = max(result, TB3 // RB3)
-    return result
+
+
+class AllRecipe:
+    def __init__(self):
+        self.listAllRecipe = self.buildAllRecipe()
+        self.allPossibilities = self.buildAllPossibilities()
+
+    def buildAllRecipe(self):
+        self.listTotalBerry = tuple(map(int, input().split()))
+        intNumberOfRecipe = int(input())
+
+        listAllRecipe = []
+        for _ in range(intNumberOfRecipe):
+            recipe = list(map(int, input().split()))
+            recipe.append(self.maxRecipe(recipe, self.listTotalBerry))
+            listAllRecipe.append(recipe)
+        return listAllRecipe
+
+    @staticmethod
+    def maxRecipe(recipe, listTotalBerry):
+        RB1, RB2, RB3, NRJ = recipe
+        TB1, TB2, TB3 = listTotalBerry
+        result = 0
+        if RB1 != 0:
+            result = TB1 // RB1
+        if RB2 != 0:
+            result = max(result, TB2 // RB2)
+        if RB3 != 0:
+            result = max(result, TB3 // RB3)
+        return result
+
+    def buildAllPossibilities(self):
+        listAllPossibilities = []
+        for i, recipe in enumerate(self.listAllRecipe):
+            print(recipe)
+            listAllPossibilities.append([])
+            for number in range(recipe[4] + 1):
+                listAllPossibilities[i].append(self.berryUsedPerMultipleIteration(recipe, number))
+        return listAllPossibilities
+
+    @staticmethod
+    def berryUsedPerMultipleIteration(recipe, number):
+        a, b, c, n, m = recipe
+        return [a * number, b * number, c * number]
 
 
 class Counter:
-    def __init__(self, listAllRecipe):
-        self.counter = self.buildCounter(listAllRecipe)
+    def __init__(self, listAllRecipe: AllRecipe):
+        self.counter = self.buildCounter(listAllRecipe.listAllRecipe)
 
-    def buildCounter(self, listAllRecipe):
+    @staticmethod
+    def buildCounter(listAllRecipe):
         counter = []
         for recipe in listAllRecipe:
             counter.append([0, recipe[4]])
@@ -55,7 +89,7 @@ class Counter:
 
     # TODO c'est tres sus comme technique faire gaffe aux reset pas et qui fait des boucles infinies
     def getToPreviousRecipe(self):
-        for index in range(len(self.counter)-1, -1, -1):
+        for index in range(len(self.counter) - 1, -1, -1):
             if self.counter[index][0]:
                 self.counter[index][0] = 0
                 for indexRecipeCounterToReset in range(index - 1, -1, -1):
@@ -71,15 +105,6 @@ class Counter:
 result = ""
 print(result)
 
-listTotalBerry = tuple(map(int, input().split()))
-intNumberOfRecipe = int(input())
-
-listAllRecipe = []
-for _ in range(intNumberOfRecipe):
-    recipe = list(map(int, input().split()))
-    recipe.append(maxRecipe(recipe, listTotalBerry))
-    listAllRecipe.append(recipe)
-
 # TODO condition d'arret
 run = True
 progDyna = {}
@@ -87,7 +112,9 @@ progDyna = {}
 while run:
     run = False
 
-counter = Counter(listAllRecipe)
+allRecipe = AllRecipe()
+
+counter = Counter(allRecipe)
 
 print(counter.counterToString())
 print("1_______________________")
