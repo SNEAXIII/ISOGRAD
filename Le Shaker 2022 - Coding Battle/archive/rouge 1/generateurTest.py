@@ -10,7 +10,7 @@ for fileToOpen in ("moi", "gagnant"):
                 output.write(data)
 
 
-dataSample = "4"
+dataSample = "3"
 
 for fileType in ("input", "output"):
     shutil.copy2(f"dataSample/{fileType}{dataSample}.txt", "testVitesse")
