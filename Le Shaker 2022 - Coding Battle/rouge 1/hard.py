@@ -1,6 +1,6 @@
 import sys, io
 
-sampleToTest = "Custom2"
+sampleToTest = "3"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -61,7 +61,7 @@ class AllRecipe:
         return [a * number, b * number, c * number]
 
     def isPossibleToCraft(self, counter):
-        currentPossibilities = self.getByPossibilitie(counter)
+        currentPossibilities = self.getByPossibilitie(counter.counter)
         sumA = sum(recipe[0] for recipe in currentPossibilities)
         sumB = sum(recipe[1] for recipe in currentPossibilities)
         sumC = sum(recipe[2] for recipe in currentPossibilities)
@@ -70,8 +70,8 @@ class AllRecipe:
             return counter
         return False
 
-    def getMaxNrjByRecipe(self,counter):
-        return sum(counter[index][0]*self.listAllRecipe[index][3] for index in range(len(counter)))
+    def getMaxNrjByRecipe(self, counter):
+        return sum(counter.counter[index][0] * self.listAllRecipe[index][3] for index in range(len(counter.counter)))
 
 
 class Counter:
@@ -95,8 +95,8 @@ class Counter:
     def counterToString(self):
         return "".join(map(self.listWithIntToHex, self.counter))
 
-    def isEmpty(self):
-        return self.counterToString() == "0" * len(self.counter)
+    def isFilled(self):
+        return self.counterToString() != "0" * len(self.counter)
 
     def plus1ToCounter(self):
         for recipeIndex in self.counter[::-1]:
@@ -122,20 +122,29 @@ class Counter:
                 break
 
 
-result = ""
-print(result)
-
 allRecipe = AllRecipe()
-
 counter = Counter(allRecipe)
-
+intResult = 0
+strResult = []
 # TODO condition d'arret
 run = True
-while run:
-    run = False
+while counter.plus1ToCounter() and run:
+    if counter.listAllRecipe.isPossibleToCraft(counter):
+        nrjTry = counter.listAllRecipe.getMaxNrjByRecipe(counter)
+        if nrjTry > intResult:
+            intResult = nrjTry
+            strResult = "".join(str(recipe[0]) for recipe in counter.counter)
+    else:
+        counter.getToPreviousRecipe()
+
+    run = counter.isFilled()
+print(intResult)
+print(strResult)
+# TODO print result
+# print(result)
 
 
-print(counter.counterToString())
+"""print(counter.counterToString())
 print("1_______________________")
 for _ in range(67):
     counter.plus1ToCounter()
@@ -149,10 +158,10 @@ counter.plus1ToCounter()
 print(counter.counterToString())
 print("2_______________________")
 print(counter.listAllRecipe.getMaxNrjByRecipe(counter.counter))
-print(counter.counterToString())
+print(counter.counterToString())"""
 
 # END
-if outputExpected == result:
-    print("Le test est valide")
-else:
-    print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepct ----> <|{outputExpected}|>")
+# if outputExpected == result:
+#     print("Le test est valide")
+# else:
+#     print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepct ----> <|{outputExpected}|>")
