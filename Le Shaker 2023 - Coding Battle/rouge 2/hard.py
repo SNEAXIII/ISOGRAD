@@ -45,16 +45,14 @@ if not isEnoughReachToJoinTheExit(width, height, h):
     print("impossible")
     exit()
 
-gridForest = [[0] * width] * height
+gridForest = [[0 for _ in range(width)] for _ in range(height)]
 
 addMultiTree()
 # todo faire une matrice des coté emprunté pour chaque cases individuelles
 # todo faire un fonction pour déterminer un coté ou partir
 # todo faire une fonction pour savoir si on est deja allé
 # todo faire un roll back
-gridParcours = [[[0] * 4] * width] * height
-for line in gridParcours:
-    print(line)
+gridParcours = [[[0, 0, 0, 0] for _ in range(width)] for _ in range(height)]
 
 # todo faire un set des case déja parcourues
 printGrid()
