@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import main
 
-sampleToTest = "2"
+sampleToTest = "1"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -45,14 +45,14 @@ if not isEnoughReachToJoinTheExit(width, height, h):
     print("impossible")
     exit()
 
-gridForest = [[0] * width] * height
+gridForest = [[0 for _ in range(width)] for _ in range(height)]
 
 addMultiTree()
 # todo faire une matrice des coté emprunté pour chaque cases individuelles
 # todo faire un fonction pour déterminer un coté ou partir
 # todo faire une fonction pour savoir si on est deja allé
 # todo faire un roll back
-gridParcours = [[[0] * 4] * width] * height
+gridParcours = [[[0,0,0,0] for _ in range(width)] for _ in range(height)]
 for line in gridParcours:
     print(line)
 
