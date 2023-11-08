@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import main
 
-sampleToTest = "1"
+sampleToTest = "Custom"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -21,8 +21,8 @@ class Pile:
     def depile(self):
         return self.pile.pop()
 
-    def empile(self, elem):
-        self.pile.append(elem)
+    def empile(self, x, y):
+        self.pile.append((x, y))
 
 
 def printGrid():
@@ -47,25 +47,71 @@ def isEnoughReachToJoinTheExit(x, y, h):
 
 def lockResetCell(x, y):
     if x == 0:
-        lockside(x, y, LEFT)
+        lockside(x, y, LEFT, False)
     if x == width - 1:
-        lockside(x, y, RIGHT)
+        lockside(x, y, RIGHT, False)
     if y == 0:
-        lockside(x, y, TOP)
+        lockside(x, y, TOP, False)
     if y == height - 1:
-        lockside(x, y, BOTTOM)
+        lockside(x, y, BOTTOM, False)
 
 
-def lockside(x, y, side):
-    if not isValidSide(x, y, side):
+def lockside(x, y, side, alert=True):
+    if not isValidToVisit(x, y, side) and alert:
         print("ALEEEEED")
     gridParcours[y][x][side] = 1
 
 
-def isValidSide(x, y, side):
+def isValidToVisit(x, y, side):
     if gridParcours[y][x][side]:
         return False
     return True
+
+
+def isAlreadyVisited(cell):
+    if cell in pile.pile:
+        return True
+    return False
+
+
+def findCoordsByASide(x, y, side):
+    if side == 0:
+        y -= 1
+    elif side == 1:
+        x += 1
+    elif side == 2:
+        y += 1
+    elif side == 3:
+        x -= 1
+    return x, y
+
+
+def chooseSideToGo(x, y):
+    for side in range(4):
+        if isValidToVisit(x, y, side):
+            newCoords = findCoordsByASide(x, y, side)
+            if not isAlreadyVisited(newCoords):
+                return *newCoords, side
+    return False
+
+
+def mooveToNextCell(xCurrent, yCurrent, xNew, yNew, side):
+    lockside(xCurrent, yCurrent, side)
+    reversedSide = reverseSide(side)
+    lockside(xNew, yNew, reversedSide)
+    pile.empile(xNew, yNew)
+
+
+def reverseSide(side):
+    return (side + 2) % 4
+
+
+def voyage():
+    xCurrent, yCurrent = 0, 0
+    pile.empile(xCurrent, yCurrent)
+    coordsPlusSideToGO = chooseSideToGo(0, 0)
+    mooveToNextCell(xCurrent, yCurrent, *coordsPlusSideToGO)
+    print(coordsPlusSideToGO)
 
 
 # TODO montrer au prof l'erreur qu'il a remarque sur le jeu numéro 2
@@ -93,10 +139,13 @@ for yh in range(height):
         gridParcours[yh].append([0, 0, 0, 0])
         lockResetCell(xw, yh)
 
-# lockResetAll()
-
 for line in gridParcours:
     print(line)
+
+pile = Pile()
+
+voyage()
+
 printGrid()
 
 result = ""
