@@ -95,7 +95,8 @@ def chooseSideToGo(x, y):
     return False
 
 
-def mooveToNextCell(xCurrent, yCurrent, xNew, yNew, side):
+def mooveToNextCell(xCurrent, yCurrent):
+    xNew, yNew, side = chooseSideToGo(xCurrent, yCurrent)
     # On bloque la possibilité d'aller à la case ou l'on va
     lockside(xCurrent, yCurrent, side)
     # On prends le coté opposé
@@ -115,10 +116,12 @@ def voyage(hPlanneur):
     xCurrent, yCurrent = 0, 0
     pile.empile(xCurrent, yCurrent)
     # todo start fix
-    coordsPlusSideToGO = chooseSideToGo(xCurrent, yCurrent)
-    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent, *coordsPlusSideToGO)
+    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
+    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
+    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
+    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
     # todo end fix
-    print(coordsPlusSideToGO,hPlanneur)
+    print(hPlanneur)
     print(pile.pile)
     printGrid(xCurrent, yCurrent)
 
