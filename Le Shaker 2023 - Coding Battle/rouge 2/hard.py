@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import show
 
-sampleToTest = "Custom"
+sampleToTest = "1"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -23,6 +23,9 @@ class Pile:
 
     def empile(self, x, y):
         self.pile.append((x, y))
+
+    def getLast(self):
+        return self.pile[-1]
 
 
 def printGrid(xCurrent, yCurrent):
@@ -46,6 +49,10 @@ def isEnoughReachToJoinTheExit(x, y, h):
 
 
 def lockResetCell(x, y):
+    if x == width - 1 and y == height - 1:
+        gridParcours[y][x] = [0, 0, 0, 0]
+        print("je suis a la fin")
+        return
     if x == 0:
         lockside(x, y, LEFT, False)
     if x == width - 1:
@@ -74,6 +81,12 @@ def isAlreadyVisited(cell):
     return False
 
 
+def rollBackToPreviousCell():
+    actualCell = pile.depile()
+    lockResetCell(*actualCell)
+    return pile.getLast()
+
+
 def findCoordsByASide(x, y, side):
     if side == 0:
         y -= 1
@@ -96,31 +109,40 @@ def chooseSideToGo(x, y):
 
 
 def mooveToNextCell(xCurrent, yCurrent):
-    xNew, yNew, side = chooseSideToGo(xCurrent, yCurrent)
-    # On bloque la possibilité d'aller à la case ou l'on va
-    lockside(xCurrent, yCurrent, side)
-    # On prends le coté opposé
-    reversedSide = reverseSide(side)
-    # On bloque la possibilité d'aller à la case ou l'on est actuellement
-    lockside(xNew, yNew, reversedSide)
-    # On enregistre la case ou l'on se dirige
-    pile.empile(xNew, yNew)
-    # On enregistre le déplacement
-    return xNew, yNew
+    tupleResultSide = chooseSideToGo(xCurrent, yCurrent)
+    if tupleResultSide:
+        xNew, yNew, side = tupleResultSide
+        # On bloque la possibilité d'aller à la case où l'on va
+        lockside(xCurrent, yCurrent, side)
+        # On prend le côté opposé
+        reversedSide = reverseSide(side)
+        # On bloque la possibilité d'aller à la case où l'on est actuellement
+        lockside(xNew, yNew, reversedSide)
+        # On enregistre la case ou l'on se dirige
+        pile.empile(xNew, yNew)
+        # On enregistre le déplacement
+        return xNew, yNew
+    else:
+        return rollBackToPreviousCell()
+
 
 def reverseSide(side):
     return (side + 2) % 4
 
 
+# TODO rollback quand on arrive a la fin du parcours
+# TODO check a chaque moove qu'il y a assez de reach pour atteindre la sortie
 def voyage(hPlanneur):
+    numberOfMeterToCut = 0
     xCurrent, yCurrent = 0, 0
     pile.empile(xCurrent, yCurrent)
-    # todo start fix
-    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
-    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
-    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
-    xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
-    # todo end fix
+    for _ in range(4):
+        try:
+            xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
+        except IndexError:
+            # todo add return here
+            # return numberOfMeterToCut
+            print(numberOfMeterToCut)
     print(hPlanneur)
     print(pile.pile)
     printGrid(xCurrent, yCurrent)
@@ -129,8 +151,6 @@ def voyage(hPlanneur):
 # TODO montrer au prof l'erreur qu'il a remarque sur le jeu numéro 2
 width, height = map(int, input().split())
 hPlanneur = int(input())
-
-
 
 # Si le parcours est impossible
 # TODO remettre plus tard si il le faut
