@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import show
 
-sampleToTest = "1"
+sampleToTest = "Custom"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -48,25 +48,24 @@ def isEnoughReachToJoinTheExit(x, y, h):
     return width - x + height - y - 2 <= h
 
 
-def lockResetCell(x, y):
-    if x == width - 1 and y == height - 1:
-        gridParcours[y][x] = [0, 0, 0, 0]
+def lockResetCell(x, y, end=False):
+    a = "test"
+    # todo enregistrer le max
+    if x == width - 1 and y == height - 1 and end:
+        gridParcours[height - 1][width - 1] = [True, True, True, True]
         print("je suis a la fin")
         return
-    if x == 0:
-        lockside(x, y, LEFT, False)
-    if x == width - 1:
-        lockside(x, y, RIGHT, False)
-    if y == 0:
-        lockside(x, y, TOP, False)
-    if y == height - 1:
-        lockside(x, y, BOTTOM, False)
+
+    lockside(x, y, LEFT, x == 0, False)
+    lockside(x, y, RIGHT, x == width - 1, False)
+    lockside(x, y, TOP, y == 0, False)
+    lockside(x, y, BOTTOM, y == height - 1, False)
 
 
-def lockside(x, y, side, alert=True):
+def lockside(x, y, side, ban, alert=True):
     if not isValidToVisit(x, y, side) and alert:
-        print("ALEEEEED")
-    gridParcours[y][x][side] = 1
+        print("i am stuck")
+    gridParcours[y][x][side] = ban
 
 
 def isValidToVisit(x, y, side):
@@ -83,7 +82,7 @@ def isAlreadyVisited(cell):
 
 def rollBackToPreviousCell():
     actualCell = pile.depile()
-    lockResetCell(*actualCell)
+    lockResetCell(*actualCell, True)
     return pile.getLast()
 
 
@@ -113,11 +112,11 @@ def mooveToNextCell(xCurrent, yCurrent):
     if tupleResultSide:
         xNew, yNew, side = tupleResultSide
         # On bloque la possibilité d'aller à la case où l'on va
-        lockside(xCurrent, yCurrent, side)
+        lockside(xCurrent, yCurrent, side, True)
         # On prend le côté opposé
         reversedSide = reverseSide(side)
         # On bloque la possibilité d'aller à la case où l'on est actuellement
-        lockside(xNew, yNew, reversedSide)
+        lockside(xNew, yNew, reversedSide, True)
         # On enregistre la case ou l'on se dirige
         pile.empile(xNew, yNew)
         # On enregistre le déplacement
@@ -136,15 +135,17 @@ def voyage(hPlanneur):
     numberOfMeterToCut = 0
     xCurrent, yCurrent = 0, 0
     pile.empile(xCurrent, yCurrent)
-    for _ in range(4):
+    for _ in range(9):
         try:
             xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
         except IndexError:
             # todo add return here
             # return numberOfMeterToCut
-            print(numberOfMeterToCut)
-    print(hPlanneur)
-    print(pile.pile)
+            print("numberOfMeterToCut", numberOfMeterToCut)
+    print("hPlanneur", hPlanneur)
+    print("pile", pile.pile)
+    for line in gridParcours:
+        print(line)
     printGrid(xCurrent, yCurrent)
 
 
@@ -170,11 +171,8 @@ gridParcours = []
 for yh in range(height):
     gridParcours.append([])
     for xw in range(width):
-        gridParcours[yh].append([0, 0, 0, 0])
+        gridParcours[yh].append([False, False, False, False])
         lockResetCell(xw, yh)
-
-for line in gridParcours:
-    print(line)
 
 pile = Pile()
 
