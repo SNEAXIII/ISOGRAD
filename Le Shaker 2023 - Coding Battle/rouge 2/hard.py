@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import show
 
-sampleToTest = "Custom"
+sampleToTest = "1"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -51,9 +51,11 @@ def isEnoughReachToJoinTheExit(x, y, h):
 def lockResetCell(x, y, end=False):
     a = "test"
     # todo enregistrer le max
-    if x == width - 1 and y == height - 1 and end:
+    if x == width - 1 and y == height - 1:
         gridParcours[height - 1][width - 1] = [True, True, True, True]
-        print("je suis a la fin")
+        if end:
+            # todo ajouter une comparaison entre les arbres a cut mini et la coupe courante
+            print("je suis a la fin")
         return
 
     lockside(x, y, LEFT, x == 0, False)
@@ -99,6 +101,7 @@ def findCoordsByASide(x, y, side):
 
 
 def chooseSideToGo(x, y):
+    a = "test"
     for side in range(4):
         if isValidToVisit(x, y, side):
             newCoords = findCoordsByASide(x, y, side)
@@ -107,9 +110,12 @@ def chooseSideToGo(x, y):
     return False
 
 
-def mooveToNextCell(xCurrent, yCurrent):
+# todo check le hplanner en fx de la liste de parcours a la place de compter si besoins
+def mooveToNextCell(xCurrent, yCurrent, hPlanneur):
     tupleResultSide = chooseSideToGo(xCurrent, yCurrent)
+    # todo faire un rollback si trop d'arbres a couper par rapport au mini
     if tupleResultSide:
+        hPlanneur -= 1
         xNew, yNew, side = tupleResultSide
         # On bloque la possibilité d'aller à la case où l'on va
         lockside(xCurrent, yCurrent, side, True)
@@ -119,29 +125,35 @@ def mooveToNextCell(xCurrent, yCurrent):
         lockside(xNew, yNew, reversedSide, True)
         # On enregistre la case ou l'on se dirige
         pile.empile(xNew, yNew)
+        # on coupe ce qui dépasse de l'arbre
+        treeHeight = gridForest[yNew][xNew]
+        # todo fix that shit
+        meterToCut = max(0,treeHeight-hPlanneur)
         # On enregistre le déplacement
-        return xNew, yNew
+        return xNew, yNew, hPlanneur
     else:
-        return rollBackToPreviousCell()
+        print('je rollback')
+        return *rollBackToPreviousCell(), hPlanneur + 1
 
 
 def reverseSide(side):
     return (side + 2) % 4
 
 
-# TODO rollback quand on arrive a la fin du parcours
 # TODO check a chaque moove qu'il y a assez de reach pour atteindre la sortie
 def voyage(hPlanneur):
     numberOfMeterToCut = 0
     xCurrent, yCurrent = 0, 0
     pile.empile(xCurrent, yCurrent)
-    for _ in range(9):
+    for numberOfMoove in range(nombreMOOVE):
         try:
-            xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
+            xCurrent, yCurrent, hPlanneur = mooveToNextCell(xCurrent, yCurrent, hPlanneur)
         except IndexError:
             # todo add return here
             # return numberOfMeterToCut
             print("numberOfMeterToCut", numberOfMeterToCut)
+            print("numberOfMoove", numberOfMoove)
+            break
     print("hPlanneur", hPlanneur)
     print("pile", pile.pile)
     for line in gridParcours:
@@ -163,9 +175,6 @@ hPlanneur = int(input())
 gridForest = [[0 for _ in range(width)] for _ in range(height)]
 
 addMultiTree()
-# todo faire un fonction pour déterminer un coté ou partir
-# todo faire une fonction pour savoir si on est deja allé
-# todo faire un roll back
 gridParcours = []
 
 for yh in range(height):
@@ -175,7 +184,7 @@ for yh in range(height):
         lockResetCell(xw, yh)
 
 pile = Pile()
-
+nombreMOOVE = 900000
 voyage(hPlanneur)
 
 result = ""
