@@ -12,4 +12,4 @@ print(result)
 if outputExpected == result:
     print("Le test est valide")
 else:
-    print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepct ----> <|{outputExpected}|>")
+    print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepect ----> <|{outputExpected}|>")
