@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import show
 
-sampleToTest = "1"
+sampleToTest = "Custom"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -21,14 +21,17 @@ class Pile:
     def depile(self):
         return self.pile.pop()
 
-    def empile(self, x, y):
-        self.pile.append((x, y))
+    def empile(self, x, y, h):
+        self.pile.append((x, y, h))
 
     def getLast(self):
         return self.pile[-1]
 
     def getHRestant(self):
-        return hMaxPlanneur-len(self.pile)
+        return hMaxPlanneur - len(self.pile)
+
+    def getCurrentMeterToCut(self):
+        return self.getLast()[2]
 
 
 def printGrid(xCurrent, yCurrent):
@@ -59,6 +62,9 @@ def lockResetCell(x, y, end=False):
         if end:
             # todo ajouter une comparaison entre les arbres a cut mini et la coupe courante
             print("je suis a la fin")
+            print("pile en fin",pile.pile)
+            global result
+            result = max(result,pile.getCurrentMeterToCut())
         return
 
     lockside(x, y, LEFT, x == 0, False)
@@ -86,9 +92,9 @@ def isAlreadyVisited(cell):
 
 
 def rollBackToPreviousCell():
-    actualCell = pile.depile()
+    actualCell = pile.depile()[0:2]
     lockResetCell(*actualCell, True)
-    return pile.getLast()
+    return pile.getLast()[0:2]
 
 
 def findCoordsByASide(x, y, side):
@@ -115,7 +121,6 @@ def chooseSideToGo(x, y):
 # todo check le hplanner en fx de la liste de parcours a la place de compter si besoins
 def mooveToNextCell(xCurrent, yCurrent):
     tupleResultSide = chooseSideToGo(xCurrent, yCurrent)
-    # todo faire un rollback si trop d'arbres a couper par rapport au mini
     if tupleResultSide:
         hPlanneur = pile.getHRestant()
         xNew, yNew, side = tupleResultSide
@@ -125,11 +130,13 @@ def mooveToNextCell(xCurrent, yCurrent):
         reversedSide = reverseSide(side)
         # On bloque la possibilité d'aller à la case où l'on est actuellement
         lockside(xNew, yNew, reversedSide, True)
-        # On enregistre la case ou l'on se dirige
-        pile.empile(xNew, yNew)
         # on coupe ce qui dépasse de l'arbre
         treeHeight = gridForest[yNew][xNew]
-        meterToCut = max(0,treeHeight-hPlanneur)
+        meterToCut = max(0, treeHeight - hPlanneur)
+        currentMeterToCut = pile.getCurrentMeterToCut() + meterToCut
+        # On enregistre la case ou l'on se dirige
+        pile.empile(xNew, yNew, currentMeterToCut)
+        # todo faire un rollback si trop d'arbres a couper par rapport au mini
         # On enregistre le déplacement
         return xNew, yNew
     else:
@@ -145,23 +152,20 @@ def reverseSide(side):
 def voyage(hMaxPlanneur):
     numberOfMeterToCut = 0
     xCurrent, yCurrent = 0, 0
-    pile.empile(xCurrent, yCurrent)
+    pile.empile(xCurrent, yCurrent, numberOfMeterToCut)
     for numberOfMoove in range(nombreMOOVE):
         try:
             xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
-            if xCurrent==1 and yCurrent == 1:
-                print("number of moove",numberOfMoove)
         except IndexError:
             # todo add return here
             # return numberOfMeterToCut
             print("numberOfMeterToCut", numberOfMeterToCut)
             print("numberOfMoove", numberOfMoove)
             break
-
     print("pile", pile.pile)
     for line in gridParcours:
         print(line)
-    printGrid(xCurrent, yCurrent)
+    # printGrid(xCurrent, yCurrent)
 
 
 width, height = map(int, input().split())
@@ -186,10 +190,13 @@ for yh in range(height):
         lockResetCell(xw, yh)
 
 pile = Pile()
-nombreMOOVE =85
+nombreMOOVE = 85
+
+result = 0
+
 voyage(hMaxPlanneur)
 
-result = ""
+
 print(result)
 # END
 if outputExpected == result:
