@@ -1,13 +1,3 @@
-import sys, io
-from testVisu import show
-
-sampleToTest = "Custom2"
-with open(f"dataSample/output{sampleToTest}.txt") as f:
-    outputExpected = int(f.read())
-with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
-    sys.stdin = io.StringIO(f.read())
-
-# START
 TOP = 0
 RIGHT = 1
 BOTTOM = 2
@@ -220,8 +210,3 @@ result = None
 nombreMOOVE = 600000
 
 print(voyage())
-# END
-if outputExpected == result:
-    print("Le test est valide")
-else:
-    print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepect ----> <|{outputExpected}|>")
