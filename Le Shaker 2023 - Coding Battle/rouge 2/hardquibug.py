@@ -3,7 +3,7 @@ from testVisu import show
 
 sampleToTest = "1"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
-    outputExpected = int(f.read())
+    outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
     sys.stdin = io.StringIO(f.read())
 
@@ -21,17 +21,14 @@ class Pile:
     def depile(self):
         return self.pile.pop()
 
-    def empile(self, x, y, h):
-        self.pile.append((x, y, h))
+    def empile(self, x, y):
+        self.pile.append((x, y))
 
     def getLast(self):
         return self.pile[-1]
 
     def getHRestant(self):
-        return hMaxPlanneur - len(self.pile)
-
-    def getCurrentMeterToCut(self):
-        return self.getLast()[2]
+        return hMaxPlanneur-len(self.pile)
 
 
 def printGrid(xCurrent, yCurrent):
@@ -55,17 +52,13 @@ def isEnoughReachToJoinTheExit(x, y, h):
 
 
 def lockResetCell(x, y, end=False):
+    a = "test"
+    # todo enregistrer le max
     if x == width - 1 and y == height - 1:
         gridParcours[height - 1][width - 1] = [True, True, True, True]
         if end:
             # todo ajouter une comparaison entre les arbres a cut mini et la coupe courante
             print("je suis a la fin")
-            print("pile en fin", pile.pile)
-            global result
-            if result:
-                result = min(result, pile.getCurrentMeterToCut())
-            else:
-                result = pile.getCurrentMeterToCut()
         return
 
     lockside(x, y, LEFT, x == 0, False)
@@ -75,6 +68,8 @@ def lockResetCell(x, y, end=False):
 
 
 def lockside(x, y, side, ban, alert=True):
+    if not isValidToVisit(x, y, side) and alert:
+        print("i am stuck")
     gridParcours[y][x][side] = ban
 
 
@@ -91,10 +86,9 @@ def isAlreadyVisited(cell):
 
 
 def rollBackToPreviousCell():
-    x, y, h = pile.depile()
-    lockResetCell(x, y, True)
-    xNew, yNew, hNew = pile.getLast()
-    return xNew, yNew
+    actualCell = pile.depile()
+    lockResetCell(*actualCell, True)
+    return pile.getLast()
 
 
 def findCoordsByASide(x, y, side):
@@ -121,6 +115,7 @@ def chooseSideToGo(x, y):
 # todo check le hplanner en fx de la liste de parcours a la place de compter si besoins
 def mooveToNextCell(xCurrent, yCurrent):
     tupleResultSide = chooseSideToGo(xCurrent, yCurrent)
+    # todo faire un rollback si trop d'arbres a couper par rapport au mini
     if tupleResultSide:
         hPlanneur = pile.getHRestant()
         xNew, yNew, side = tupleResultSide
@@ -130,16 +125,15 @@ def mooveToNextCell(xCurrent, yCurrent):
         reversedSide = reverseSide(side)
         # On bloque la possibilité d'aller à la case où l'on est actuellement
         lockside(xNew, yNew, reversedSide, True)
+        # On enregistre la case ou l'on se dirige
+        pile.empile(xNew, yNew)
         # on coupe ce qui dépasse de l'arbre
         treeHeight = gridForest[yNew][xNew]
-        meterToCut = max(0, treeHeight - hPlanneur)
-        currentMeterToCut = pile.getCurrentMeterToCut() + meterToCut
-        # On enregistre la case ou l'on se dirige
-        pile.empile(xNew, yNew, currentMeterToCut)
-        # todo faire un rollback si trop d'arbres a couper par rapport au mini
+        meterToCut = max(0,treeHeight-hPlanneur)
         # On enregistre le déplacement
         return xNew, yNew
     else:
+        print('je rollback')
         return rollBackToPreviousCell()
 
 
@@ -151,16 +145,20 @@ def reverseSide(side):
 def voyage(hMaxPlanneur):
     numberOfMeterToCut = 0
     xCurrent, yCurrent = 0, 0
-    pile.empile(xCurrent, yCurrent, numberOfMeterToCut)
+    pile.empile(xCurrent, yCurrent)
     for numberOfMoove in range(nombreMOOVE):
         try:
             xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
+            if xCurrent==1 and yCurrent == 1:
+                print("number of moove",numberOfMoove)
         except IndexError:
             # todo add return here
             # return numberOfMeterToCut
             print("numberOfMeterToCut", numberOfMeterToCut)
             print("numberOfMoove", numberOfMoove)
             break
+
+    print("pile", pile.pile)
     for line in gridParcours:
         print(line)
     printGrid(xCurrent, yCurrent)
@@ -188,12 +186,10 @@ for yh in range(height):
         lockResetCell(xw, yh)
 
 pile = Pile()
-nombreMOOVE = 100
-
-result = None
-
+nombreMOOVE =85
 voyage(hMaxPlanneur)
 
+result = ""
 print(result)
 # END
 if outputExpected == result:

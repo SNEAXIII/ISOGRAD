@@ -1,13 +1,3 @@
-import sys, io
-from testVisu import show
-
-sampleToTest = "1"
-with open(f"dataSample/output{sampleToTest}.txt") as f:
-    outputExpected = int(f.read())
-with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
-    sys.stdin = io.StringIO(f.read())
-
-# START
 TOP = 0
 RIGHT = 1
 BOTTOM = 2
@@ -55,6 +45,8 @@ def isEnoughReachToJoinTheExit(x, y, h):
 
 
 def lockResetCell(x, y, end=False):
+    a = "test"
+    # todo enregistrer le max
     if x == width - 1 and y == height - 1:
         gridParcours[height - 1][width - 1] = [True, True, True, True]
         if end:
@@ -91,10 +83,9 @@ def isAlreadyVisited(cell):
 
 
 def rollBackToPreviousCell():
-    x, y, h = pile.depile()
-    lockResetCell(x, y, True)
-    xNew, yNew, hNew = pile.getLast()
-    return xNew, yNew
+    actualCell = pile.depile()[0:2]
+    lockResetCell(*actualCell, True)
+    return pile.getLast()[0:2]
 
 
 def findCoordsByASide(x, y, side):
@@ -188,15 +179,10 @@ for yh in range(height):
         lockResetCell(xw, yh)
 
 pile = Pile()
-nombreMOOVE = 100
+nombreMOOVE = 800000
 
 result = None
 
 voyage(hMaxPlanneur)
 
 print(result)
-# END
-if outputExpected == result:
-    print("Le test est valide")
-else:
-    print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepct ----> <|{outputExpected}|>")
