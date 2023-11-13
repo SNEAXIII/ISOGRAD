@@ -62,11 +62,12 @@ def lockResetCell(x, y, end=False):
     if x == width - 1 and y == height - 1:
         gridParcours[height - 1][width - 1] = [True, True, True, True]
         if end:
-            print("je suis a la fin")
-            print(pileParcours.pile)
-            print(pileCuttingTree.getCurrentMeterToCut())
+            # print("je suis a la fin")
+            # print(pileParcours.pile)
+            # print(pileCuttingTree.getCurrentMeterToCut())
             global result
-            if result == 0:
+            if pileCuttingTree.getCurrentMeterToCut() == 0:
+                result = pileCuttingTree.getCurrentMeterToCut()
                 raise TimeoutError()
             elif result is not None:
                 result = min(result, pileCuttingTree.getCurrentMeterToCut())
