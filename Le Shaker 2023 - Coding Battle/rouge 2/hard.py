@@ -27,6 +27,9 @@ class Pile:
     def getLast(self):
         return self.pile[-1]
 
+    def getHRestant(self):
+        return hMaxPlanneur-len(self.pile)
+
 
 def printGrid(xCurrent, yCurrent):
     show(gridForest, xCurrent, yCurrent)
@@ -101,7 +104,6 @@ def findCoordsByASide(x, y, side):
 
 
 def chooseSideToGo(x, y):
-    a = "test"
     for side in range(4):
         if isValidToVisit(x, y, side):
             newCoords = findCoordsByASide(x, y, side)
@@ -111,11 +113,11 @@ def chooseSideToGo(x, y):
 
 
 # todo check le hplanner en fx de la liste de parcours a la place de compter si besoins
-def mooveToNextCell(xCurrent, yCurrent, hPlanneur):
+def mooveToNextCell(xCurrent, yCurrent):
     tupleResultSide = chooseSideToGo(xCurrent, yCurrent)
     # todo faire un rollback si trop d'arbres a couper par rapport au mini
     if tupleResultSide:
-        hPlanneur -= 1
+        hPlanneur = pile.getHRestant()
         xNew, yNew, side = tupleResultSide
         # On bloque la possibilité d'aller à la case où l'on va
         lockside(xCurrent, yCurrent, side, True)
@@ -127,13 +129,12 @@ def mooveToNextCell(xCurrent, yCurrent, hPlanneur):
         pile.empile(xNew, yNew)
         # on coupe ce qui dépasse de l'arbre
         treeHeight = gridForest[yNew][xNew]
-        # todo fix that shit
         meterToCut = max(0,treeHeight-hPlanneur)
         # On enregistre le déplacement
-        return xNew, yNew, hPlanneur
+        return xNew, yNew
     else:
         print('je rollback')
-        return *rollBackToPreviousCell(), hPlanneur + 1
+        return rollBackToPreviousCell()
 
 
 def reverseSide(side):
@@ -141,29 +142,30 @@ def reverseSide(side):
 
 
 # TODO check a chaque moove qu'il y a assez de reach pour atteindre la sortie
-def voyage(hPlanneur):
+def voyage(hMaxPlanneur):
     numberOfMeterToCut = 0
     xCurrent, yCurrent = 0, 0
     pile.empile(xCurrent, yCurrent)
     for numberOfMoove in range(nombreMOOVE):
         try:
-            xCurrent, yCurrent, hPlanneur = mooveToNextCell(xCurrent, yCurrent, hPlanneur)
+            xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
+            if xCurrent==1 and yCurrent == 1:
+                print("number of moove",numberOfMoove)
         except IndexError:
             # todo add return here
             # return numberOfMeterToCut
             print("numberOfMeterToCut", numberOfMeterToCut)
             print("numberOfMoove", numberOfMoove)
             break
-    print("hPlanneur", hPlanneur)
+
     print("pile", pile.pile)
     for line in gridParcours:
         print(line)
     printGrid(xCurrent, yCurrent)
 
 
-# TODO montrer au prof l'erreur qu'il a remarque sur le jeu numéro 2
 width, height = map(int, input().split())
-hPlanneur = int(input())
+hMaxPlanneur = int(input())
 
 # Si le parcours est impossible
 # TODO remettre plus tard si il le faut
@@ -184,8 +186,8 @@ for yh in range(height):
         lockResetCell(xw, yh)
 
 pile = Pile()
-nombreMOOVE = 900000
-voyage(hPlanneur)
+nombreMOOVE =85
+voyage(hMaxPlanneur)
 
 result = ""
 print(result)
