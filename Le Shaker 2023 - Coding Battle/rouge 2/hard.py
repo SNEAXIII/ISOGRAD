@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import show
 
-sampleToTest = "Custom2"
+sampleToTest = "9"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = int(f.read())
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -72,11 +72,13 @@ def lockResetCell(x, y, end=False):
     if x == width - 1 and y == height - 1:
         gridParcours[height - 1][width - 1] = [True, True, True, True]
         if end:
-            # print("je suis a la fin")
-            # print(pileParcours.pile)
-            # print(pileCuttingTree.getCurrentMeterToCut())
+            print("je suis a la fin")
+            print(pileParcours.pile)
+            print(pileCuttingTree.getCurrentMeterToCut())
             global result
-            if result is not None:
+            if result == 0:
+                raise TimeoutError()
+            elif result is not None:
                 result = min(result, pileCuttingTree.getCurrentMeterToCut())
             else:
                 result = pileCuttingTree.getCurrentMeterToCut()
@@ -185,8 +187,10 @@ def voyage():
             xCurrent, yCurrent = mooveToNextCell(xCurrent, yCurrent)
         except IndexError:
             break
-    return result
+        except TimeoutError:
+            return 0
     # printGrid(xCurrent, yCurrent)
+    return result
     # for line in gridParcours:
     #     print(line)
     #
@@ -217,7 +221,7 @@ pileCuttingTree = PileCuttingTree()
 pileParcours = PileParcours()
 result = None
 
-nombreMOOVE = 600000
+nombreMOOVE = 999999999
 
 print(voyage())
 # END
