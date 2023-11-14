@@ -1,3 +1,12 @@
+import timeit
+aTester = r"""
+import sys, io
+
+sampleToTest = "1"
+with open(f"output{sampleToTest}.txt") as f:
+    outputExpected = f.read()
+with open(f"input{sampleToTest}.txt", "r", encoding="utf-8") as f:
+    sys.stdin = io.StringIO(f.read())
 def check():
     result = ""
     ancienIndex2 = 0
@@ -24,3 +33,8 @@ if result:
 else:
     result = "NORMAL"
     print(result)
+
+
+"""
+execution_time = timeit.timeit(aTester, number=10000)
+print(f"Temps d'exécution moyen : {execution_time} secondes")

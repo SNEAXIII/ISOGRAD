@@ -24,3 +24,5 @@ if result:
 else:
     result = "NORMAL"
     print(result)
+
+

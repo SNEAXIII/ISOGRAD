@@ -6,11 +6,11 @@ for fileToOpen in ("moi", "gagnant"):
                 rawData = input.read()
                 data = "import timeit\naTester = r\"\"\"\n" + \
                        partial.read() + rawData + \
-                       "\"\"\"\nexecution_time = timeit.timeit(aTester, number=1000)\nprint(f\"Temps d\'exécution moyen : {execution_time} secondes\")"
+                       "\"\"\"\nexecution_time = timeit.timeit(aTester, number=10000)\nprint(f\"Temps d\'exécution moyen : {execution_time} secondes\")"
                 output.write(data)
 
 
-dataSample = "1"
+dataSample = "4"
 
 for fileType in ("input", "output"):
     shutil.copy2(f"dataSample/{fileType}{dataSample}.txt", "testVitesse")
