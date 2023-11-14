@@ -1,38 +1,80 @@
 import sys, io
 
-sampleToTest = "4"
+sampleToTest = "3"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
     sys.stdin = io.StringIO(f.read())
+
+
 # START
-def check():
-    result = ""
-    ancienIndex2 = 0
-    for cara1 in motif1:
-        indexCara2 = motif2.find(cara1)
-        if not indexCara2 == -1:
-            if ancienIndex2 > indexCara2:
-                return False
-            else:
-                result += cara1
-                ancienIndex2 = indexCara2
-    if result:
+from copy import deepcopy
+class Graph:
+    def __init__(self):
+        self.all = dict()
+
+    def add(self, rawData):
+        _from, _to = rawData.split()
+        if _from in self.all:
+            self.all[_from].add(_to)
+        else:
+            self.createNode(_from)
+
+    def createNode(self, _from):
+        self.all[_from] = Node()
+
+    def parcours(self):
+        max = 0
+        result = 0
+        for node in self.all:
+            counter = 0
+            aVisiter = deepcopy(self.all[node].next)
+            while aVisiter:
+                enCours = aVisiter.pop()
+                aVisiter |= deepcopy(self.all[enCours].next)
+                if self.all[enCours].type == 0:
+                    counter+=1
+            if max < counter:
+                max = counter
+                result = node
         return result
-    return False
 
-motif1 = input()
 
-motif2 = input()
+class Node:
+    def __init__(self, elem=None):
+        # 0 = house, 1 = protection
+        self.type = 0
+        self.next = set()
+        if elem is not None:
+            self.add(elem)
 
-result = check()
-if result:
-    result = f"TEMPETE\n{result}"
-    print(result)
-else:
-    result = "NORMAL"
-    print(result)
+    def add(self, other):
+        self.next.add(other)
+        self.reset()
 
+    def __len__(self):
+        return len(self.next)
+
+    def reset(self):
+        _len = len(self)
+        if _len != 0:
+            self.type = 1
+
+    def __str__(self):
+        return f"{self.next}"
+
+
+numberOfRelation, numberOfModule = map(int, input().split())
+
+village = Graph()
+
+for number in range(numberOfModule):
+    village.createNode(str(number))
+for _ in range(numberOfRelation):
+    village.add(input())
+
+result = village.parcours()
+print(result)
 
 # END
 if outputExpected == result:
