@@ -1,8 +1,8 @@
 import timeit
-aTester = """
+aTester = r"""
 import sys, io
 
-sampleToTest = "1"
+sampleToTest = "4"
 with open(f"output{sampleToTest}.txt") as f:
     outputExpected = f.read()
 with open(f"input{sampleToTest}.txt", "r", encoding="utf-8") as f:

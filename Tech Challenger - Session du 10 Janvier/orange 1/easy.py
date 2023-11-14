@@ -1,12 +1,11 @@
-import timeit
-aTester = r"""
 import sys, io
 
 sampleToTest = "4"
-with open(f"output{sampleToTest}.txt") as f:
+with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = f.read()
-with open(f"input{sampleToTest}.txt", "r", encoding="utf-8") as f:
+with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
     sys.stdin = io.StringIO(f.read())
+# START
 def check():
     result = ""
     ancienIndex2 = 0
@@ -35,6 +34,8 @@ else:
     print(result)
 
 
-"""
-execution_time = timeit.timeit(aTester, number=10000)
-print(f"Temps d'exécution moyen : {execution_time} secondes")
+# END
+if outputExpected == result:
+    print("Le test est valide")
+else:
+    print(f"Le test n'est pas valide\noutput ----> <|{result}|>\nexepect ----> <|{outputExpected}|>")
