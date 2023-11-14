@@ -12,7 +12,7 @@ def create_folder(folder_path):
 folder_path = input("Entrez le chemin du dossier principal : ")
 create_folder(folder_path)
 
-exercise_folder =os.path.join(folder_path,"newFolder")
+exercise_folder =os.path.join(folder_path,"vert 1")
 create_folder(exercise_folder)
 
 

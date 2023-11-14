@@ -1,7 +1,7 @@
 import sys, io
 from testVisu import show
 
-sampleToTest = "Custom3"
+sampleToTest = "4"
 with open(f"dataSample/output{sampleToTest}.txt") as f:
     outputExpected = int(f.read())
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
@@ -73,8 +73,8 @@ def lockResetCell(x, y, end=False):
         gridParcours[height - 1][width - 1] = [True, True, True, True]
         if end:
             # print("je suis a la fin")
-            # print(pileParcours.pile)
-            # print(pileCuttingTree.getCurrentMeterToCut())
+            print(pileParcours.pile)
+            print(pileCuttingTree.getCurrentMeterToCut())
             global result
             if pileCuttingTree.getCurrentMeterToCut() == 0:
                 result = pileCuttingTree.getCurrentMeterToCut()
@@ -131,7 +131,6 @@ def findCoordsByASide(x, y, side):
 def chooseSideToGo(x, y):
     # todo bug incoming, vérifier l'excactitude des mesures de fin de parcours
     if result:
-        a = pileCuttingTree.getLast()
         isTooMuchToCut = result < pileCuttingTree.getLast()
         if isTooMuchToCut:
             return False

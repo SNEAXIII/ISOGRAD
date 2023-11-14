@@ -63,8 +63,8 @@ def lockResetCell(x, y, end=False):
         gridParcours[height - 1][width - 1] = [True, True, True, True]
         if end:
             # print("je suis a la fin")
-            # print(pileParcours.pile)
-            # print(pileCuttingTree.getCurrentMeterToCut())
+            print(pileParcours.pile)
+            print(pileCuttingTree.getCurrentMeterToCut())
             global result
             if pileCuttingTree.getCurrentMeterToCut() == 0:
                 result = pileCuttingTree.getCurrentMeterToCut()
@@ -121,7 +121,6 @@ def findCoordsByASide(x, y, side):
 def chooseSideToGo(x, y):
     # todo bug incoming, vérifier l'excactitude des mesures de fin de parcours
     if result:
-        a = pileCuttingTree.getLast()
         isTooMuchToCut = result < pileCuttingTree.getLast()
         if isTooMuchToCut:
             return False
