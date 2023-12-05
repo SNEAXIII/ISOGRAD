@@ -36,5 +36,5 @@ for r in range(sol[0] + 1, sol[0] + m + 1):
 # for row in grid:
 #     print(''.join(row))
 """
-execution_time = timeit.timeit(aTester, number=100)
+execution_time = timeit.timeit(aTester, number=10000)
 print(f"Temps d'exécution moyen : {execution_time} secondes")

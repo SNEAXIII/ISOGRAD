@@ -52,5 +52,5 @@ findLocation()
 # for line in lines:
 #     print(line)
 """
-execution_time = timeit.timeit(aTester, number=100)
+execution_time = timeit.timeit(aTester, number=10000)
 print(f"Temps d'exécution moyen : {execution_time} secondes")
