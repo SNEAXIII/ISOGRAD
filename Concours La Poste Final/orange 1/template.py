@@ -6,13 +6,12 @@ with open(f"dataSample/output{sampleToTest}.txt") as f:
 with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
     sys.stdin = io.StringIO(f.read())
 # START
-result = ""
 lStatue, hStatue, lSalle, hSalle = map(int, input().split(" "))
 
 
 def multiIntersect(y):
-    intersect = linesDyna[y]
-    for line in linesDyna[y + 1:y + 1 + hStatue]:
+    intersect = linesPosition[y]
+    for line in linesPosition[y + 1:y + 1 + hStatue]:
         intersect &= line
         if not intersect:
             return False
@@ -21,8 +20,8 @@ def multiIntersect(y):
 
 def fillGrid(x, y):
     for index in range(hStatue):
-        copyLines = lines[y+index+1]
-        lines[y+index+1] = copyLines[:x] + "x" * lStatue + copyLines[x+lStatue:]
+        copyLines = lines[y + index + 1]
+        lines[y + index + 1] = copyLines[:x] + "x" * lStatue + copyLines[x + lStatue:]
 
 
 def findLocation():
@@ -34,51 +33,25 @@ def findLocation():
 
 
 lines = [input() for _ in range(hSalle)]
-linesDyna = []
+
+linesPosition = []
 for y, yElem in enumerate(lines):
-    # print("______________________")
     count = 0
-    linesDyna.append(set())
+    linesPosition.append(set())
     for x, xElem in enumerate(yElem):
         if xElem == ".":
             count += 1
-        elif xElem == "#":
+        else:
             count = 0
         if count >= lStatue + 2:
-            xGood = x - lStatue
-            linesDyna[y].add(xGood)
-            # print(xGood)
+            linesPosition[y].add(x - lStatue)
 
 findLocation()
 
-# print("____________________________________________")
-# colonnesDyna = []
-# print("les collones")
-# for x in range(lSalle):
-#     print("______________________")
-#
-#     count = 0
-#     colonnesDyna.append(set())
-#     for y in range(hSalle):
-#         case = lines[y][x]
-#         if case == ".":
-#             count += 1
-#         elif case == "#":
-#             count = 0
-#         if count >= hStatue + 2:
-#             yGood = y - hStatue
-#             colonnesDyna[x].add(yGood)
-#             print(yGood)
-
 for line in lines:
     print(line)
-
-# print(f"lignes : {linesDyna}")
-# print(f"colonnes : {colonnesDyna}")
-
-
-# print(result)
 # END
+result = ""
 if outputExpected == result:
     print("Le test est valide")
 else:
