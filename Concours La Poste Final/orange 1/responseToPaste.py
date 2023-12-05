@@ -1,11 +1,3 @@
-import sys, io
-
-sampleToTest = "Custom2"
-with open(f"dataSample/output{sampleToTest}.txt") as f:
-    outputExpected = f.read()
-with open(f"dataSample/input{sampleToTest}.txt", "r", encoding="utf-8") as f:
-    sys.stdin = io.StringIO(f.read())
-# START
 result = ""
 lStatue, hStatue, lSalle, hSalle = map(int, input().split(" "))
 
@@ -78,8 +70,3 @@ for line in lines:
 
 
 # print(result)
-# END
-if outputExpected == result:
-    print("Le test est valide")
-else:
-    print(f"Le test n'est pas valide\noutput ----> <|\n{result}\n|>\nexepect ----> <|\n{outputExpected}\n|>")
