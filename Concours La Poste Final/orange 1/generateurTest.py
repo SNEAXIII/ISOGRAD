@@ -1,5 +1,5 @@
 import shutil
-dataSample = "11"
+dataSample = "10"
 numberExec = 10000
 for fileToOpen in ("moi", "gagnant"):
     with open(f"testVitesse/{fileToOpen}.py", "r", encoding="utf-8") as input:
