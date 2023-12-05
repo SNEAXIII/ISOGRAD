@@ -1,3 +1,12 @@
+import timeit
+aTester = r"""
+import sys, io
+
+sampleToTest = "11"
+with open(f"output{sampleToTest}.txt") as f:
+    outputExpected = f.read()
+with open(f"input{sampleToTest}.txt", "r", encoding="utf-8") as f:
+    sys.stdin = io.StringIO(f.read())
 lStatue, hStatue, lSalle, hSalle = map(int, input().split(" "))
 
 
@@ -42,3 +51,6 @@ findLocation()
 
 # for line in lines:
 #     print(line)
+"""
+execution_time = timeit.timeit(aTester, number=100)
+print(f"Temps d'exécution moyen : {execution_time} secondes")

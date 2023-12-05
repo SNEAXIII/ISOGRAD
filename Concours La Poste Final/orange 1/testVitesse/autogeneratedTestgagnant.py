@@ -1,3 +1,12 @@
+import timeit
+aTester = r"""
+import sys, io
+
+sampleToTest = "11"
+with open(f"output{sampleToTest}.txt") as f:
+    outputExpected = f.read()
+with open(f"input{sampleToTest}.txt", "r", encoding="utf-8") as f:
+    sys.stdin = io.StringIO(f.read())
 import sys
 
 lines = []
@@ -26,3 +35,6 @@ for r in range(sol[0] + 1, sol[0] + m + 1):
         grid[r][c] = 'x'
 # for row in grid:
 #     print(''.join(row))
+"""
+execution_time = timeit.timeit(aTester, number=100)
+print(f"Temps d'exécution moyen : {execution_time} secondes")
